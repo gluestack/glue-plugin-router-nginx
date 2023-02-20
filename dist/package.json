@@ -1,0 +1,33 @@
+{
+    "name": "@gluestack/glue-plugin-router-nginx",
+    "version": "0.0.1",
+    "description": "Create an Application using GlueStack framework",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/gluestack/create-gluestack-app"
+    },
+    "keywords": [
+        "npm",
+        "create-gluestack-app"
+    ],
+    "engines": {
+        "node": ">=18 <19"
+    },
+    "license": "ISC",
+    "dependencies": {
+        "@gluestack/glue-plugin-engine": "^0.0.x",
+        "@types/node": "^18.14.0",
+        "@gluestack/framework": "^0.0.34"
+    },
+    "peerDependencies": {
+        "@gluestack/glue-plugin-engine": "^0.0.x"
+    },
+    "main": "dist/src/index.js",
+    "scripts": {
+        "plugin-dev": "tsc --watch",
+        "plugin-build": "tsc --declaration"
+    },
+    "devDependencies": {
+        "typescript": "^4.9.5"
+    }
+}
