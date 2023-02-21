@@ -1,4 +1,4 @@
-import { DockerodeHelper } from "@gluestack/helpers";
+import { execute } from "./helpers/spawn";
 import IApp from "@gluestack/framework/types/app/interface/IApp";
 import IInstance from "@gluestack/framework/types/plugin/interface/IInstance";
 import IContainerController from "@gluestack/framework/types/plugin/interface/IContainerController";
@@ -37,25 +37,8 @@ export class PluginInstanceContainerController implements IContainerController
     return this.status;
   }
 
-  // @ts-ignore
-  async getPortNumber(returnDefault?: boolean): Promise<number> {
-    return new Promise((resolve, reject) => {
-      if (this.portNumber) {
-        return resolve(this.portNumber);
-      }
-      let ports =
-        this.callerInstance.callerPlugin.gluePluginStore.get("ports") || [];
-      DockerodeHelper.getPort(1337, ports)
-        .then((port: number) => {
-          this.setPortNumber(port);
-          ports.push(port);
-          this.callerInstance.callerPlugin.gluePluginStore.set("ports", ports);
-          return resolve(this.portNumber);
-        })
-        .catch((e: any) => {
-          reject(e);
-        });
-    });
+  getPortNumber(returnDefault?: boolean): number | null {
+    return null
   }
 
   getContainerId(): string {
@@ -83,8 +66,8 @@ export class PluginInstanceContainerController implements IContainerController
   getConfig(): any {}
 
   async up() {
+    await this.routeGenerate();
     this.setStatus("up");
-    await this.getPortNumber();
   }
 
   async down() {
@@ -92,6 +75,23 @@ export class PluginInstanceContainerController implements IContainerController
   }
 
   async build() {
-    //
+    await this.routeGenerate(true);
+  }
+
+  private async routeGenerate(isProd: boolean = false) {
+    let args: string[] = [
+      'glue',
+      'route:generate'
+    ];
+
+    if (isProd) {
+      args.push('--build');
+      args.push('prod');
+    }
+
+    await execute('node', args, {
+      cwd: process.cwd(),
+      shell: true,
+    });
   }
 }

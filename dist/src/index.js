@@ -42,6 +42,8 @@ exports.__esModule = true;
 exports.GlueStackPlugin = void 0;
 var package_json_1 = __importDefault(require("../package.json"));
 var PluginInstance_1 = require("./PluginInstance");
+var route_list_1 = require("./commands/route-list");
+var route_generate_1 = require("./commands/route-generate");
 var GlueStackPlugin = (function () {
     function GlueStackPlugin(app, gluePluginStore) {
         this.type = 'stateless';
@@ -50,6 +52,9 @@ var GlueStackPlugin = (function () {
         this.gluePluginStore = gluePluginStore;
     }
     GlueStackPlugin.prototype.init = function () {
+        var _this = this;
+        this.app.addCommand(function (program) { return (0, route_list_1.routeList)(program, _this); });
+        this.app.addCommand(function (program) { return (0, route_generate_1.routeGenerate)(program, _this); });
     };
     GlueStackPlugin.prototype.destroy = function () {
     };
@@ -70,12 +75,20 @@ var GlueStackPlugin = (function () {
     };
     GlueStackPlugin.prototype.runPostInstall = function (instanceName, target) {
         return __awaiter(this, void 0, void 0, function () {
+            var instance;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4, this.app.createPluginInstance(this, instanceName, this.getTemplateFolderPath(), target)];
-                    case 1:
+                    case 0:
+                        instance = this
+                            .app
+                            .getPluginByName("@gluestack/glue-plugin-router-nginx");
+                        if (!(instance && instance.getInstances() && instance.getInstances().length >= 1)) return [3, 1];
+                        throw new Error("Router Nginx instance already installed as ".concat(instance.getInstances()[0].getName()));
+                    case 1: return [4, this.app.createPluginInstance(this, instanceName, this.getTemplateFolderPath(), target)];
+                    case 2:
                         _a.sent();
-                        return [2];
+                        _a.label = 3;
+                    case 3: return [2];
                 }
             });
         });

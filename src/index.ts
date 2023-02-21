@@ -7,6 +7,8 @@ import IInstance from "@gluestack/framework/types/plugin/interface/IInstance";
 import ILifeCycle from "@gluestack/framework/types/plugin/interface/ILifeCycle";
 import IManagesInstances from "@gluestack/framework/types/plugin/interface/IManagesInstances";
 import IGlueStorePlugin from "@gluestack/framework/types/store/interface/IGluePluginStore";
+import { routeList } from "./commands/route-list";
+import { routeGenerate } from "./commands/route-generate";
 
 //Do not edit the name of this class
 export class GlueStackPlugin implements IPlugin, IManagesInstances, ILifeCycle {
@@ -22,7 +24,8 @@ export class GlueStackPlugin implements IPlugin, IManagesInstances, ILifeCycle {
   }
 
   init() {
-    //
+    this.app.addCommand((program: any) => routeList(program, this));
+    this.app.addCommand((program: any) => routeGenerate(program, this));
   }
 
   destroy() {
@@ -50,12 +53,25 @@ export class GlueStackPlugin implements IPlugin, IManagesInstances, ILifeCycle {
   }
 
   async runPostInstall(instanceName: string, target: string) {
-    await this.app.createPluginInstance(
-      this,
-      instanceName,
-      this.getTemplateFolderPath(),
-      target,
-    );
+    const instance: GlueStackPlugin = this
+      .app
+      .getPluginByName("@gluestack/glue-plugin-router-nginx");
+
+    // Validation
+    if (
+      instance && instance.getInstances() && instance.getInstances().length >= 1
+    ) {
+      throw new Error(
+        `Router Nginx instance already installed as ${instance.getInstances()[0].getName()}`,
+      );
+    } else {
+      await this.app.createPluginInstance(
+        this,
+        instanceName,
+        this.getTemplateFolderPath(),
+        target,
+      );
+    }
   }
 
   createInstance(

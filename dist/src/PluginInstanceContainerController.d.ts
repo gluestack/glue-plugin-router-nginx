@@ -12,7 +12,7 @@ export declare class PluginInstanceContainerController implements IContainerCont
     getEnv(): string;
     getDockerJson(): {};
     getStatus(): "up" | "down";
-    getPortNumber(returnDefault?: boolean): Promise<number>;
+    getPortNumber(returnDefault?: boolean): number | null;
     getContainerId(): string;
     setStatus(status: "up" | "down"): "up" | "down";
     setPortNumber(portNumber: number): number;
@@ -21,4 +21,5 @@ export declare class PluginInstanceContainerController implements IContainerCont
     up(): Promise<void>;
     down(): Promise<void>;
     build(): Promise<void>;
+    private routeGenerate;
 }

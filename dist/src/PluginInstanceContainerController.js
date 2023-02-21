@@ -37,7 +37,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 exports.__esModule = true;
 exports.PluginInstanceContainerController = void 0;
-var helpers_1 = require("@gluestack/helpers");
+var spawn_1 = require("./helpers/spawn");
 var PluginInstanceContainerController = (function () {
     function PluginInstanceContainerController(app, callerInstance) {
         this.status = "down";
@@ -60,26 +60,7 @@ var PluginInstanceContainerController = (function () {
         return this.status;
     };
     PluginInstanceContainerController.prototype.getPortNumber = function (returnDefault) {
-        return __awaiter(this, void 0, void 0, function () {
-            var _this = this;
-            return __generator(this, function (_a) {
-                return [2, new Promise(function (resolve, reject) {
-                        if (_this.portNumber) {
-                            return resolve(_this.portNumber);
-                        }
-                        var ports = _this.callerInstance.callerPlugin.gluePluginStore.get("ports") || [];
-                        helpers_1.DockerodeHelper.getPort(1337, ports)
-                            .then(function (port) {
-                            _this.setPortNumber(port);
-                            ports.push(port);
-                            _this.callerInstance.callerPlugin.gluePluginStore.set("ports", ports);
-                            return resolve(_this.portNumber);
-                        })["catch"](function (e) {
-                            reject(e);
-                        });
-                    })];
-            });
-        });
+        return null;
     };
     PluginInstanceContainerController.prototype.getContainerId = function () {
         return this.containerId;
@@ -101,11 +82,10 @@ var PluginInstanceContainerController = (function () {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0:
-                        this.setStatus("up");
-                        return [4, this.getPortNumber()];
+                    case 0: return [4, this.routeGenerate()];
                     case 1:
                         _a.sent();
+                        this.setStatus("up");
                         return [2];
                 }
             });
@@ -122,7 +102,38 @@ var PluginInstanceContainerController = (function () {
     PluginInstanceContainerController.prototype.build = function () {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
-                return [2];
+                switch (_a.label) {
+                    case 0: return [4, this.routeGenerate(true)];
+                    case 1:
+                        _a.sent();
+                        return [2];
+                }
+            });
+        });
+    };
+    PluginInstanceContainerController.prototype.routeGenerate = function (isProd) {
+        if (isProd === void 0) { isProd = false; }
+        return __awaiter(this, void 0, void 0, function () {
+            var args;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        args = [
+                            'glue',
+                            'route:generate'
+                        ];
+                        if (isProd) {
+                            args.push('--build');
+                            args.push('prod');
+                        }
+                        return [4, (0, spawn_1.execute)('node', args, {
+                                cwd: process.cwd(),
+                                shell: true
+                            })];
+                    case 1:
+                        _a.sent();
+                        return [2];
+                }
             });
         });
     };
