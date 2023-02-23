@@ -94,8 +94,7 @@ var runner = function (glueStackPlugin, options) { return __awaiter(void 0, void
                 details = {
                     name: name_1,
                     type: type,
-                    instance: instance_1.getName(),
-                    is_backend: false
+                    instance: instance_1.getName()
                 };
                 details.path = (0, path_1.join)(process.cwd(), instance_1.getInstallationPath());
                 details.status = instance_1.getContainerController().getStatus();

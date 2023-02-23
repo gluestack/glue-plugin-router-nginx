@@ -1,6 +1,7 @@
 import { IRoutes } from '@gluestack/framework/types/plugin/interface/IContainerController';
 export default class NginxConf {
     upstreams: any[];
+    mainStreams: any[];
     private filename;
     private subdirectory;
     constructor();

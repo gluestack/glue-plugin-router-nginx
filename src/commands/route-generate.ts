@@ -45,8 +45,7 @@ export const runner = async (glueStackPlugin: GlueStackPlugin, options: any) => 
       const details: IStatelessPlugin = {
         name,
         type,
-        instance: instance.getName(),
-        is_backend: false
+        instance: instance.getName()
       };
 
       details.path = join(process.cwd(), instance.getInstallationPath());

@@ -11,12 +11,14 @@ import { IRoutes } from '@gluestack/framework/types/plugin/interface/IContainerC
  */
 export default class NginxConf {
   public upstreams: any[];
+  public mainStreams: any[];
 
   private filename: string = 'nginx.conf';
   private subdirectory: string = join('meta', 'router');
 
   constructor() {
     this.upstreams = [];
+    this.mainStreams = [];
   }
 
   // Generates the dev nginx.conf file
@@ -39,18 +41,28 @@ export default class NginxConf {
   public async addRouter(
     packageName: string, instance: string, port: number, string: string, routes: IRoutes[]
   ): Promise<boolean> {
-    const upstreams: any[] = this.upstreams;
-
     const exist = await fileExists(string);
     if (!exist) return Promise.resolve(false);
 
-    upstreams.push({
-      locations: [...require(string)()],
+    const locations = [...require(string)()];
+    const server_name = await this.hasServerName(locations);
+
+    const stream = {
+      locations,
       port,
       instance: removeSpecialChars(instance),
       packageName,
       routes
-    });
+    };
+
+    if (!server_name) {
+      this.mainStreams.push(stream);
+    } else {
+      if (!this.upstreams[server_name]) {
+        this.upstreams[server_name] = [];
+      }
+      this.upstreams[server_name].push(stream);
+    }
 
     return Promise.resolve(true);
   }
@@ -58,41 +70,28 @@ export default class NginxConf {
   // Converts the nginx conf data to a string
   private async toConf(): Promise<string> {
     let content: string = '';
-    const upstreams: any[] = this.upstreams;
-    const mainStreams: any[] = [];
+    const upstreams: any = this.upstreams;
+    const mainStreams: any = this.mainStreams;
 
-    // Add upstreams with server_name
-    for await (const upstream of upstreams) {
-      if (!await this.hasServerName(upstream.locations)) {
-        mainStreams.push({
-          locations: [...upstream.locations],
-          port: upstream.port,
-          packageName: upstream.packageName,
-          instance: upstream.instance,
-          routes: upstream.routes
-        });
-        continue;
-      }
+    // Adds upstreams with server name
+    for await (const server_name of Object.keys(upstreams)) {
+      const streams = upstreams[server_name];
+      let locations: any = [];
 
-      let locations: {}[] = [];
-      let server_name: string = '';
-
-      for await (const location of upstream.locations) {
-        if (location.hasOwnProperty('server_name') && location.server_name !== '') {
-          server_name = location.server_name;
-        }
-
-        if (location.hasOwnProperty('path')) {
-          locations.push({
-            path: location.path,
-            proxy_instance: `host.docker.internal:${upstream.port}`,
-            proxy_path: location.proxy.path,
-            host: location.host,
-            size_in_mb: location.size_in_mb || 50,
-            packageName: upstream.packageName,
-            instance: upstream.instance,
-            routes: upstream.routes
-          });
+      for await (const upstream of streams) {
+        for await (const location of upstream.locations) {
+          if (location.hasOwnProperty('path')) {
+            locations.push({
+              path: location.path,
+              proxy_instance: location.proxy.instance || `host.docker.internal:${upstream.port}`,
+              proxy_path: location.proxy.path,
+              host: location.host,
+              size_in_mb: location.size_in_mb || 50,
+              packageName: upstream.packageName,
+              instance: upstream.instance,
+              routes: upstream.routes
+            });
+          }
         }
       }
 
@@ -106,7 +105,7 @@ export default class NginxConf {
         if (location.hasOwnProperty('path')) {
           locations.push({
             path: location.path,
-            proxy_instance: `host.docker.internal:${mainStream.port}`,
+            proxy_instance: location.proxy.instance || `host.docker.internal:${mainStream.port}`,
             proxy_path: location.proxy.path,
             host: location.host,
             size_in_mb: location.size_in_mb || 50,
@@ -131,52 +130,39 @@ export default class NginxConf {
   // Converts the nginx conf data to a string
   private async toProdConf(): Promise<string> {
     let content: string = '';
-    const upstreams: any[] = this.upstreams;
-    const mainStreams: any[] = [];
+    const upstreams: any = this.upstreams;
+    const mainStreams: any = this.mainStreams;
 
     // If HAS SERVER_NAME : Add upstreams with server_name
-    for await (const upstream of upstreams) {
-      if (!await this.hasServerName(upstream.locations)) {
-        mainStreams.push({
-          locations: [...upstream.locations],
-          port: upstream.port,
-          packageName: upstream.packageName,
-          instance: upstream.instance,
-          routes: upstream.routes
-        });
-        continue;
-      }
+    for await (const server_name of Object.keys(upstreams)) {
+      const streams = upstreams[server_name];
+      let locations: any = [];
 
-      let locations: {}[] = [];
-      let server_name: string = '';
+      for await (const upstream of streams) {
+        for await (const location of upstream.locations) {
+          let port: any = upstream.port;
+          switch (upstream.packageName) {
+            case "@gluestack/glue-plugin-web":
+              port = 3000;
+              break;
+            case "@gluestack/glue-plugin-backend-engine":
+              port = 3500;
+              break;
+            default:
+              port = upstream.port;
+              break;
+          }
 
-      for await (const location of upstream.locations) {
-        if (location.hasOwnProperty('server_name') && location.server_name !== '') {
-          server_name = location.server_name;
-        }
-
-        let port: any = upstream.port;
-        switch (upstream.packageName) {
-          case "@gluestack/glue-plugin-web":
-            port = 3000;
-            break;
-          case "@gluestack/glue-plugin-backend-engine":
-            port = 3500;
-            break;
-          default:
-            port = upstream.port;
-            break;
-        }
-
-        if (location.hasOwnProperty('path')) {
-          locations.push({
-            path: location.path,
-            proxy_instance:`${upstream.instance}:${port}`,
-            proxy_path: location.proxy.path,
-            host: location.host,
-            size_in_mb: location.size_in_mb || 50,
-            routes: upstream.routes
-          });
+          if (location.hasOwnProperty('path')) {
+            locations.push({
+              path: location.path,
+              proxy_instance:`${upstream.instance}:${port}`,
+              proxy_path: location.proxy.path,
+              host: location.host,
+              size_in_mb: location.size_in_mb || 50,
+              routes: upstream.routes
+            });
+          }
         }
       }
 
@@ -184,7 +170,7 @@ export default class NginxConf {
     }
 
     // IF DOES NOT HAS SERVER_NAME : Add main-streams ie. streams without server_name into project name as server_name
-    const locations: {}[] = [];
+    const locations: any = [];
     for await (const mainStream of mainStreams) {
       for await (const location of mainStream.locations) {
         let port: any = mainStream.port;
@@ -227,7 +213,7 @@ export default class NginxConf {
   private async hasServerName(router: any[]) {
     for await (const route of router) {
       if (route.hasOwnProperty("server_name") && route.server_name !== '') {
-        return true;
+        return route.server_name;
       }
     }
     return false;
