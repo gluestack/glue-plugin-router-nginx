@@ -140,23 +140,11 @@ export default class NginxConf {
 
       for await (const upstream of streams) {
         for await (const location of upstream.locations) {
-          let port: any = upstream.port;
-          switch (upstream.packageName) {
-            case "@gluestack/glue-plugin-web":
-              port = 3000;
-              break;
-            case "@gluestack/glue-plugin-backend-engine":
-              port = 3500;
-              break;
-            default:
-              port = upstream.port;
-              break;
-          }
-
+          const port: any = this.getBuildPort(upstream.packageName, upstream.port);
           if (location.hasOwnProperty('path')) {
             locations.push({
               path: location.path,
-              proxy_instance:`${upstream.instance}:${port}`,
+              proxy_instance: `${upstream.instance}:${port}`,
               proxy_path: location.proxy.path,
               host: location.host,
               size_in_mb: location.size_in_mb || 50,
@@ -173,23 +161,11 @@ export default class NginxConf {
     const locations: any = [];
     for await (const mainStream of mainStreams) {
       for await (const location of mainStream.locations) {
-        let port: any = mainStream.port;
-        switch (mainStream.packageName) {
-          case "@gluestack/glue-plugin-web":
-            port = 3000;
-            break;
-          case "@gluestack/glue-plugin-backend-engine":
-            port = 3500;
-            break;
-          default:
-            port = mainStream.port;
-            break;
-        }
-
+        const port: any = this.getBuildPort(mainStream.packageName, mainStream.port);
         if (location.hasOwnProperty('path')) {
           locations.push({
             path: location.path,
-            proxy_instance:`${mainStream.instance}:${port}`,
+            proxy_instance: `${mainStream.instance}:${port}`,
             proxy_path: location.proxy.path,
             host: location.host,
             size_in_mb: location.size_in_mb || 50,
@@ -217,5 +193,22 @@ export default class NginxConf {
       }
     }
     return false;
+  }
+
+  private getBuildPort(packageName: string, port: string | number): string | number {
+    switch (packageName) {
+      case "@gluestack/glue-plugin-web":
+        return 3000;
+      case "@gluestack/glue-plugin-backend-engine":
+        return 3500;
+      case "@gluestack/glue-plugin-service-node":
+        return 9000;
+      case "@gluestack/glue-plugin-auth":
+        return 9090;
+      case "@gluestack/glue-plugin-storage":
+        return 9090;
+      default:
+        return port;
+    }
   }
 }

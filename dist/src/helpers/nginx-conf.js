@@ -420,18 +420,7 @@ var NginxConf = (function () {
                         _v = false;
                         try {
                             location_3 = _j;
-                            port = upstream.port;
-                            switch (upstream.packageName) {
-                                case "@gluestack/glue-plugin-web":
-                                    port = 3000;
-                                    break;
-                                case "@gluestack/glue-plugin-backend-engine":
-                                    port = 3500;
-                                    break;
-                                default:
-                                    port = upstream.port;
-                                    break;
-                            }
+                            port = this.getBuildPort(upstream.packageName, upstream.port);
                             if (location_3.hasOwnProperty('path')) {
                                 locations_2.push({
                                     path: location_3.path,
@@ -542,18 +531,7 @@ var NginxConf = (function () {
                         _0 = false;
                         try {
                             location_4 = _q;
-                            port = mainStream.port;
-                            switch (mainStream.packageName) {
-                                case "@gluestack/glue-plugin-web":
-                                    port = 3000;
-                                    break;
-                                case "@gluestack/glue-plugin-backend-engine":
-                                    port = 3500;
-                                    break;
-                                default:
-                                    port = mainStream.port;
-                                    break;
-                            }
+                            port = this.getBuildPort(mainStream.packageName, mainStream.port);
                             if (location_4.hasOwnProperty('path')) {
                                 locations.push({
                                     path: location_4.path,
@@ -671,6 +649,22 @@ var NginxConf = (function () {
                 }
             });
         });
+    };
+    NginxConf.prototype.getBuildPort = function (packageName, port) {
+        switch (packageName) {
+            case "@gluestack/glue-plugin-web":
+                return 3000;
+            case "@gluestack/glue-plugin-backend-engine":
+                return 3500;
+            case "@gluestack/glue-plugin-service-node":
+                return 9000;
+            case "@gluestack/glue-plugin-auth":
+                return 9090;
+            case "@gluestack/glue-plugin-storage":
+                return 9090;
+            default:
+                return port;
+        }
     };
     return NginxConf;
 }());

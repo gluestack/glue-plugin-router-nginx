@@ -10,4 +10,5 @@ export default class NginxConf {
     private toConf;
     private toProdConf;
     private hasServerName;
+    private getBuildPort;
 }
