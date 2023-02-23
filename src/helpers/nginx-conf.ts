@@ -202,11 +202,11 @@ export default class NginxConf {
       case "@gluestack/glue-plugin-backend-engine":
         return 3500;
       case "@gluestack/glue-plugin-service-node":
-        return 9000;
+        return 3500;
       case "@gluestack/glue-plugin-auth":
-        return 9090;
+        return 3500;
       case "@gluestack/glue-plugin-storage":
-        return 9090;
+        return 3500;
       default:
         return port;
     }
