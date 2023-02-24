@@ -36,54 +36,38 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 exports.__esModule = true;
-exports.runner = exports.routeList = void 0;
-var path_1 = require("path");
-var spawn_1 = require("../helpers/spawn");
+exports.routesEndpoints = void 0;
+var node_path_1 = require("node:path");
 var helpers_1 = require("@gluestack/helpers");
-var route_list_1 = require("../helpers/route-list");
-var routeList = function (program, glueStackPlugin) { return __awaiter(void 0, void 0, void 0, function () {
-    return __generator(this, function (_a) {
-        program
-            .command("route:list")
-            .description("Gets routes list")
-            .action(function () { return runner(glueStackPlugin); });
-        return [2];
-    });
-}); };
-exports.routeList = routeList;
-function runner(glueStackPlugin) {
+var add_trailing_slash_1 = require("./add-trailing-slash");
+function routesEndpoints(app, upstreams) {
     return __awaiter(this, void 0, void 0, function () {
-        var instance, name, filepath;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    instance = glueStackPlugin.getInstances()[0];
-                    name = instance.getName();
-                    filepath = (0, path_1.join)(process.cwd(), 'meta', 'router', name, 'routes.json');
-                    return [4, (0, helpers_1.fileExists)(filepath)];
-                case 1:
-                    if (!!(_a.sent())) return [3, 3];
-                    return [4, generateRoute()];
-                case 2:
-                    _a.sent();
-                    _a.label = 3;
-                case 3: return [4, (0, route_list_1.routesList)(glueStackPlugin.app, require(filepath))];
-                case 4:
-                    _a.sent();
-                    return [2];
+        var head, rows, _i, upstreams_1, upstream, prefixRoute, configPath, domain, port, locations, _a, locations_1, location_1, instancePath, paths;
+        return __generator(this, function (_b) {
+            head = ['Domain Name', 'Plugin Prefix Route', 'Config Path'];
+            rows = [];
+            for (_i = 0, upstreams_1 = upstreams; _i < upstreams_1.length; _i++) {
+                upstream = upstreams_1[_i];
+                prefixRoute = [];
+                configPath = [];
+                domain = upstream.domain, port = upstream.port, locations = upstream.locations;
+                for (_a = 0, locations_1 = locations; _a < locations_1.length; _a++) {
+                    location_1 = locations_1[_a];
+                    instancePath = location_1.instancePath;
+                    paths = (0, add_trailing_slash_1.addTrailingSlash)(location_1.path.replaceAll('(.*)', ''));
+                    prefixRoute.push(paths);
+                    configPath.push((0, node_path_1.relative)(process.cwd(), (0, node_path_1.join)(instancePath, 'router.js')));
+                }
+                rows.push([
+                    (0, add_trailing_slash_1.addTrailingSlash)("".concat(domain, ":").concat(port)),
+                    prefixRoute.join("\n"),
+                    configPath.join("\n")
+                ]);
             }
+            helpers_1.ConsoleTable.print(head, rows);
+            return [2];
         });
     });
 }
-exports.runner = runner;
-var generateRoute = function () { return __awaiter(void 0, void 0, void 0, function () {
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4, (0, spawn_1.execute)('node', ['glue', 'route:generate'], { cwd: process.cwd() })];
-            case 1:
-                _a.sent();
-                return [2];
-        }
-    });
-}); };
-//# sourceMappingURL=route-list.js.map
+exports.routesEndpoints = routesEndpoints;
+//# sourceMappingURL=route-endpoints.js.map

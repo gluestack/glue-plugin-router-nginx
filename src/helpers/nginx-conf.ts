@@ -39,7 +39,7 @@ export default class NginxConf {
   // Adds router.js data to the nginx conf data
   // if and only if the given path exists
   public async addRouter(
-    packageName: string, instance: string, port: number, string: string, routes: IRoutes[]
+    packageName: string, instance: string, port: number, string: string, routes: IRoutes[], instancePath: string
   ): Promise<boolean> {
     const exist = await fileExists(string);
     if (!exist) return Promise.resolve(false);
@@ -52,7 +52,8 @@ export default class NginxConf {
       port,
       instance: removeSpecialChars(instance),
       packageName,
-      routes
+      routes,
+      instancePath
     };
 
     if (!server_name) {
@@ -83,13 +84,14 @@ export default class NginxConf {
           if (location.hasOwnProperty('path')) {
             locations.push({
               path: location.path,
-              proxy_instance: location.proxy.instance || `host.docker.internal:${upstream.port}`,
+              proxy_instance: location.proxy.instance || `${upstream.instance}:${upstream.port}`,
               proxy_path: location.proxy.path,
               host: location.host,
               size_in_mb: location.size_in_mb || 50,
               packageName: upstream.packageName,
               instance: upstream.instance,
-              routes: upstream.routes
+              routes: upstream.routes,
+              instancePath: upstream.instancePath
             });
           }
         }
@@ -105,13 +107,14 @@ export default class NginxConf {
         if (location.hasOwnProperty('path')) {
           locations.push({
             path: location.path,
-            proxy_instance: location.proxy.instance || `host.docker.internal:${mainStream.port}`,
+            proxy_instance: location.proxy.instance || `${mainStream.instance}:${mainStream.port}`,
             proxy_path: location.proxy.path,
             host: location.host,
             size_in_mb: location.size_in_mb || 50,
             packageName: mainStream.packageName,
             instance: mainStream.instance,
-            routes: mainStream.routes
+            routes: mainStream.routes,
+            instancePath: mainStream.instancePath
           });
         }
       }
@@ -140,15 +143,15 @@ export default class NginxConf {
 
       for await (const upstream of streams) {
         for await (const location of upstream.locations) {
-          const port: any = this.getBuildPort(upstream.packageName, upstream.port);
           if (location.hasOwnProperty('path')) {
             locations.push({
               path: location.path,
-              proxy_instance: `${upstream.instance}:${port}`,
+              proxy_instance: location.proxy.instance || `${upstream.instance}:${upstream.port}`,
               proxy_path: location.proxy.path,
               host: location.host,
               size_in_mb: location.size_in_mb || 50,
-              routes: upstream.routes
+              routes: upstream.routes,
+              instancePath: upstream.instancePath
             });
           }
         }
@@ -161,15 +164,15 @@ export default class NginxConf {
     const locations: any = [];
     for await (const mainStream of mainStreams) {
       for await (const location of mainStream.locations) {
-        const port: any = this.getBuildPort(mainStream.packageName, mainStream.port);
         if (location.hasOwnProperty('path')) {
           locations.push({
             path: location.path,
-            proxy_instance: `${mainStream.instance}:${port}`,
+            proxy_instance: location.proxy.instance || `${mainStream.instance}:${mainStream.port}`,
             proxy_path: location.proxy.path,
             host: location.host,
             size_in_mb: location.size_in_mb || 50,
-            routes: mainStream.routes
+            routes: mainStream.routes,
+            instancePath: mainStream.instancePath
           });
         }
       }
@@ -197,16 +200,16 @@ export default class NginxConf {
 
   private getBuildPort(packageName: string, port: string | number): string | number {
     switch (packageName) {
-      case "@gluestack/glue-plugin-web":
-        return 3000;
-      case "@gluestack/glue-plugin-backend-engine":
-        return 3500;
-      case "@gluestack/glue-plugin-service-node":
-        return 3500;
-      case "@gluestack/glue-plugin-auth":
-        return 3500;
-      case "@gluestack/glue-plugin-storage":
-        return 3500;
+      // case "@gluestack/glue-plugin-web":
+      //   return 3000;
+      // case "@gluestack/glue-plugin-backend-engine":
+      //   return 3500;
+      // case "@gluestack/glue-plugin-service-node":
+      //   return 3500;
+      // case "@gluestack/glue-plugin-auth":
+      //   return 3500;
+      // case "@gluestack/glue-plugin-storage":
+      //   return 3500;
       default:
         return port;
     }

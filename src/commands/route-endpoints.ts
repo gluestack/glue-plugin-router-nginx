@@ -2,12 +2,12 @@ import { join } from "path";
 import { GlueStackPlugin } from "src";
 import { execute } from "../helpers/spawn";
 import { fileExists } from "@gluestack/helpers";
-import { routesList } from "../helpers/route-list";
+import { routesEndpoints } from "../helpers/route-endpoints";
 
-export const routeList = async (program: any, glueStackPlugin: GlueStackPlugin) => {
+export const routeEndpoints = async (program: any, glueStackPlugin: GlueStackPlugin) => {
 	program
-		.command("route:list")
-		.description("Gets routes list")
+		.command("route:endpoints")
+		.description("Gets route endpoints list")
 		.action(() => runner(glueStackPlugin));
 };
 
@@ -22,7 +22,7 @@ export async function runner(
 		await generateRoute();
 	}
 
-	await routesList(glueStackPlugin.app, require(filepath));
+	await routesEndpoints(glueStackPlugin.app, require(filepath));
 }
 
 const generateRoute = async (): Promise<void> => {

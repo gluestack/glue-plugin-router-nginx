@@ -98,7 +98,7 @@ var NginxConf = (function () {
             });
         });
     };
-    NginxConf.prototype.addRouter = function (packageName, instance, port, string, routes) {
+    NginxConf.prototype.addRouter = function (packageName, instance, port, string, routes, instancePath) {
         return __awaiter(this, void 0, void 0, function () {
             var exist, locations, server_name, stream;
             return __generator(this, function (_a) {
@@ -117,7 +117,8 @@ var NginxConf = (function () {
                             port: port,
                             instance: (0, helpers_1.removeSpecialChars)(instance),
                             packageName: packageName,
-                            routes: routes
+                            routes: routes,
+                            instancePath: instancePath
                         };
                         if (!server_name) {
                             this.mainStreams.push(stream);
@@ -188,13 +189,14 @@ var NginxConf = (function () {
                             if (location_1.hasOwnProperty('path')) {
                                 locations_1.push({
                                     path: location_1.path,
-                                    proxy_instance: location_1.proxy.instance || "host.docker.internal:".concat(upstream.port),
+                                    proxy_instance: location_1.proxy.instance || "".concat(upstream.instance, ":").concat(upstream.port),
                                     proxy_path: location_1.proxy.path,
                                     host: location_1.host,
                                     size_in_mb: location_1.size_in_mb || 50,
                                     packageName: upstream.packageName,
                                     instance: upstream.instance,
-                                    routes: upstream.routes
+                                    routes: upstream.routes,
+                                    instancePath: upstream.instancePath
                                 });
                             }
                         }
@@ -300,13 +302,14 @@ var NginxConf = (function () {
                             if (location_2.hasOwnProperty('path')) {
                                 locations.push({
                                     path: location_2.path,
-                                    proxy_instance: location_2.proxy.instance || "host.docker.internal:".concat(mainStream.port),
+                                    proxy_instance: location_2.proxy.instance || "".concat(mainStream.instance, ":").concat(mainStream.port),
                                     proxy_path: location_2.proxy.path,
                                     host: location_2.host,
                                     size_in_mb: location_2.size_in_mb || 50,
                                     packageName: mainStream.packageName,
                                     instance: mainStream.instance,
-                                    routes: mainStream.routes
+                                    routes: mainStream.routes,
+                                    instancePath: mainStream.instancePath
                                 });
                             }
                         }
@@ -371,7 +374,7 @@ var NginxConf = (function () {
     NginxConf.prototype.toProdConf = function () {
         var _a, e_6, _b, _c, _d, e_7, _e, _f, _g, e_8, _h, _j, _k, e_9, _l, _m, _o, e_10, _p, _q;
         return __awaiter(this, void 0, void 0, function () {
-            var content, upstreams, mainStreams, _r, _s, _t, server_name, streams, locations_2, _u, streams_2, streams_2_1, upstream, _v, _w, _x, location_3, port, e_8_1, e_7_1, _y, e_6_1, locations, _z, mainStreams_2, mainStreams_2_1, mainStream, _0, _1, _2, location_4, port, e_10_1, e_9_1, server_name, _3;
+            var content, upstreams, mainStreams, _r, _s, _t, server_name, streams, locations_2, _u, streams_2, streams_2_1, upstream, _v, _w, _x, location_3, e_8_1, e_7_1, _y, e_6_1, locations, _z, mainStreams_2, mainStreams_2_1, mainStream, _0, _1, _2, location_4, e_10_1, e_9_1, server_name, _3;
             return __generator(this, function (_4) {
                 switch (_4.label) {
                     case 0:
@@ -420,15 +423,15 @@ var NginxConf = (function () {
                         _v = false;
                         try {
                             location_3 = _j;
-                            port = this.getBuildPort(upstream.packageName, upstream.port);
                             if (location_3.hasOwnProperty('path')) {
                                 locations_2.push({
                                     path: location_3.path,
-                                    proxy_instance: "".concat(upstream.instance, ":").concat(port),
+                                    proxy_instance: location_3.proxy.instance || "".concat(upstream.instance, ":").concat(upstream.port),
                                     proxy_path: location_3.proxy.path,
                                     host: location_3.host,
                                     size_in_mb: location_3.size_in_mb || 50,
-                                    routes: upstream.routes
+                                    routes: upstream.routes,
+                                    instancePath: upstream.instancePath
                                 });
                             }
                         }
@@ -531,15 +534,15 @@ var NginxConf = (function () {
                         _0 = false;
                         try {
                             location_4 = _q;
-                            port = this.getBuildPort(mainStream.packageName, mainStream.port);
                             if (location_4.hasOwnProperty('path')) {
                                 locations.push({
                                     path: location_4.path,
-                                    proxy_instance: "".concat(mainStream.instance, ":").concat(port),
+                                    proxy_instance: location_4.proxy.instance || "".concat(mainStream.instance, ":").concat(mainStream.port),
                                     proxy_path: location_4.proxy.path,
                                     host: location_4.host,
                                     size_in_mb: location_4.size_in_mb || 50,
-                                    routes: mainStream.routes
+                                    routes: mainStream.routes,
+                                    instancePath: mainStream.instancePath
                                 });
                             }
                         }
@@ -652,16 +655,6 @@ var NginxConf = (function () {
     };
     NginxConf.prototype.getBuildPort = function (packageName, port) {
         switch (packageName) {
-            case "@gluestack/glue-plugin-web":
-                return 3000;
-            case "@gluestack/glue-plugin-backend-engine":
-                return 3500;
-            case "@gluestack/glue-plugin-service-node":
-                return 3500;
-            case "@gluestack/glue-plugin-auth":
-                return 3500;
-            case "@gluestack/glue-plugin-storage":
-                return 3500;
             default:
                 return port;
         }

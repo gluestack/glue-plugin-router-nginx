@@ -6,7 +6,7 @@ import IHasContainerController from "@gluestack/framework/types/plugin/interface
 import { join } from "path";
 import NginxConf from "../helpers/nginx-conf";
 import { getDomainMappings } from "../configs";
-import { readFile, writeFile } from "@gluestack/helpers";
+import { writeFile } from "@gluestack/helpers";
 import { IStatelessPlugin } from "../types/IStatelessPlugin";
 
 export const routeGenerate = async (program: any, glueStackPlugin: GlueStackPlugin) => {
@@ -69,7 +69,8 @@ export const runner = async (glueStackPlugin: GlueStackPlugin, options: any) => 
       plugin.instance,
       plugin.port,
       join(plugin.path, 'router.js'),
-      plugin.routes
+      plugin.routes,
+      plugin.path
     );
   }
 

@@ -1,6 +1,6 @@
 import { addTrailingSlash } from "../helpers/add-trailing-slash";
 
-import { ConsoleTable, fileExists } from "@gluestack/helpers";
+import { ConsoleTable } from "@gluestack/helpers";
 import IApp from "@gluestack/framework/types/app/interface/IApp";
 
 export async function routesList(app: IApp, upstreams: any) {

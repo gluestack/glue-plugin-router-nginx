@@ -6,7 +6,7 @@ export default class NginxConf {
     private subdirectory;
     constructor();
     generate(subdirectory: string, build: 'prod' | 'dev'): Promise<void>;
-    addRouter(packageName: string, instance: string, port: number, string: string, routes: IRoutes[]): Promise<boolean>;
+    addRouter(packageName: string, instance: string, port: number, string: string, routes: IRoutes[], instancePath: string): Promise<boolean>;
     private toConf;
     private toProdConf;
     private hasServerName;

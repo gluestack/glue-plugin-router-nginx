@@ -44,6 +44,7 @@ var package_json_1 = __importDefault(require("../package.json"));
 var PluginInstance_1 = require("./PluginInstance");
 var route_list_1 = require("./commands/route-list");
 var route_generate_1 = require("./commands/route-generate");
+var route_endpoints_1 = require("./commands/route-endpoints");
 var GlueStackPlugin = (function () {
     function GlueStackPlugin(app, gluePluginStore) {
         this.type = 'stateless';
@@ -55,6 +56,7 @@ var GlueStackPlugin = (function () {
         var _this = this;
         this.app.addCommand(function (program) { return (0, route_list_1.routeList)(program, _this); });
         this.app.addCommand(function (program) { return (0, route_generate_1.routeGenerate)(program, _this); });
+        this.app.addCommand(function (program) { return (0, route_endpoints_1.routeEndpoints)(program, _this); });
     };
     GlueStackPlugin.prototype.destroy = function () {
     };

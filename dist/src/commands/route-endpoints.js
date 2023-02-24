@@ -36,21 +36,21 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 exports.__esModule = true;
-exports.runner = exports.routeList = void 0;
+exports.runner = exports.routeEndpoints = void 0;
 var path_1 = require("path");
 var spawn_1 = require("../helpers/spawn");
 var helpers_1 = require("@gluestack/helpers");
-var route_list_1 = require("../helpers/route-list");
-var routeList = function (program, glueStackPlugin) { return __awaiter(void 0, void 0, void 0, function () {
+var route_endpoints_1 = require("../helpers/route-endpoints");
+var routeEndpoints = function (program, glueStackPlugin) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         program
-            .command("route:list")
-            .description("Gets routes list")
+            .command("route:endpoints")
+            .description("Gets route endpoints list")
             .action(function () { return runner(glueStackPlugin); });
         return [2];
     });
 }); };
-exports.routeList = routeList;
+exports.routeEndpoints = routeEndpoints;
 function runner(glueStackPlugin) {
     return __awaiter(this, void 0, void 0, function () {
         var instance, name, filepath;
@@ -67,7 +67,7 @@ function runner(glueStackPlugin) {
                 case 2:
                     _a.sent();
                     _a.label = 3;
-                case 3: return [4, (0, route_list_1.routesList)(glueStackPlugin.app, require(filepath))];
+                case 3: return [4, (0, route_endpoints_1.routesEndpoints)(glueStackPlugin.app, require(filepath))];
                 case 4:
                     _a.sent();
                     return [2];
@@ -86,4 +86,4 @@ var generateRoute = function () { return __awaiter(void 0, void 0, void 0, funct
         }
     });
 }); };
-//# sourceMappingURL=route-list.js.map
+//# sourceMappingURL=route-endpoints.js.map

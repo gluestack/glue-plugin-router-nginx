@@ -9,6 +9,7 @@ import IManagesInstances from "@gluestack/framework/types/plugin/interface/IMana
 import IGlueStorePlugin from "@gluestack/framework/types/store/interface/IGluePluginStore";
 import { routeList } from "./commands/route-list";
 import { routeGenerate } from "./commands/route-generate";
+import { routeEndpoints } from "./commands/route-endpoints";
 
 //Do not edit the name of this class
 export class GlueStackPlugin implements IPlugin, IManagesInstances, ILifeCycle {
@@ -26,6 +27,7 @@ export class GlueStackPlugin implements IPlugin, IManagesInstances, ILifeCycle {
   init() {
     this.app.addCommand((program: any) => routeList(program, this));
     this.app.addCommand((program: any) => routeGenerate(program, this));
+    this.app.addCommand((program: any) => routeEndpoints(program, this));
   }
 
   destroy() {
