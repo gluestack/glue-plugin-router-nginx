@@ -9,4 +9,13 @@ export const parameters = {
   docs: {
     // inlineStories: false,
   },
+  options: {
+    storySort: {
+      method: 'alphabetical',
+      order: [
+        'Router Nginx Plugin Docs',
+        ['Getting Started', 'How to Install', 'CLI Reference'],
+      ]
+    },
+  },
 };
