@@ -1,3 +1,4 @@
+import { join } from 'path';
 const { DockerodeHelper } = require('@gluestack/helpers');
 
 import { getOccupiedPorts, setDomainMappings, setOccupiedPorts } from "../configs";
@@ -17,8 +18,22 @@ export const endsWith = `}
 `;
 
 export const setServer = async (domain: string, locations: any): Promise<string> => {
+  const instance = domain.split(".")[0];
   const ports = getOccupiedPorts();
-  const port = await DockerodeHelper.getPort(7000, ports);
+  let port = null;
+  try {
+    const mappings = require(join(process.cwd(), 'router.map.js'))();
+    if (mappings[instance]) {
+      port = mappings[instance];
+    }
+    
+  } catch (e) {
+    //
+  }
+
+  if (!port) {
+    port = await DockerodeHelper.getPort(7000, ports);
+  }
 
   setOccupiedPorts([...ports, port]);
   setDomainMappings({ domain, port, locations });

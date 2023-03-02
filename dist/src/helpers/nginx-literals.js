@@ -46,20 +46,34 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
 };
 exports.__esModule = true;
 exports.setLocation = exports.setServer = exports.endsWith = exports.startsWith = void 0;
+var path_1 = require("path");
 var DockerodeHelper = require('@gluestack/helpers').DockerodeHelper;
 var configs_1 = require("../configs");
 var remove_trailing_slash_1 = require("./remove-trailing-slash");
 exports.startsWith = "\nevents {\n  worker_connections 1024;\n}\n\nhttp {\n  client_max_body_size 100M;\n  sendfile on;\n";
 exports.endsWith = "}\n";
 var setServer = function (domain, locations) { return __awaiter(void 0, void 0, void 0, function () {
-    var ports, port, newLocations, _i, locations_1, location_1;
+    var instance, ports, port, mappings, newLocations, _i, locations_1, location_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
+                instance = domain.split(".")[0];
                 ports = (0, configs_1.getOccupiedPorts)();
+                port = null;
+                try {
+                    mappings = require((0, path_1.join)(process.cwd(), 'router.map.js'))();
+                    if (mappings[instance]) {
+                        port = mappings[instance];
+                    }
+                }
+                catch (e) {
+                }
+                if (!!port) return [3, 2];
                 return [4, DockerodeHelper.getPort(7000, ports)];
             case 1:
                 port = _a.sent();
+                _a.label = 2;
+            case 2:
                 (0, configs_1.setOccupiedPorts)(__spreadArray(__spreadArray([], ports, true), [port], false));
                 (0, configs_1.setDomainMappings)({ domain: domain, port: port, locations: locations });
                 newLocations = [];
