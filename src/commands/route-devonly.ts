@@ -44,7 +44,7 @@ export const runner = async (glueStackPlugin: GlueStackPlugin) => {
     }
   }
 
-  ConsoleTable.print(head, rows);
+  if (rows.length > 0) ConsoleTable.print(head, rows);
 };
 
 const getDomainName = async (

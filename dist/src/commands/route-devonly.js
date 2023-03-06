@@ -118,7 +118,8 @@ var runner = function (glueStackPlugin) { return __awaiter(void 0, void 0, void 
                 return [7];
             case 16: return [7];
             case 17:
-                helpers_1.ConsoleTable.print(head, rows);
+                if (rows.length > 0)
+                    helpers_1.ConsoleTable.print(head, rows);
                 return [2];
         }
     });
