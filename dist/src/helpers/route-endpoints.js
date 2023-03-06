@@ -44,7 +44,7 @@ function routesEndpoints(app, upstreams) {
     return __awaiter(this, void 0, void 0, function () {
         var head, rows, _i, upstreams_1, upstream, prefixRoute, configPath, domain, port, locations, _a, locations_1, location_1, instancePath, paths;
         return __generator(this, function (_b) {
-            head = ['Domain Name', 'Plugin Prefix Route', 'Config Path'];
+            head = ['Domain Name (Stateless)', 'Plugin Prefix Route', 'Config Path'];
             rows = [];
             for (_i = 0, upstreams_1 = upstreams; _i < upstreams_1.length; _i++) {
                 upstream = upstreams_1[_i];

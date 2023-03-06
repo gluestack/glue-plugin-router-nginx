@@ -4,7 +4,7 @@ import { ConsoleTable } from "@gluestack/helpers";
 import IApp from "@gluestack/framework/types/app/interface/IApp";
 
 export async function routesList(app: IApp, upstreams: any) {
-	const head: string[] = ['Domain Name', 'Plugin Prefix Route', 'URI Route', 'URI Method']
+	const head: string[] = ['Domain Name (Stateless)', 'Plugin Prefix Route', 'URI Route', 'URI Method']
 	const rows: any = [];
 
 	for (const upstream of upstreams) {

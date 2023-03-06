@@ -4,7 +4,7 @@ import { addTrailingSlash } from "./add-trailing-slash";
 import IApp from "@gluestack/framework/types/app/interface/IApp";
 
 export async function routesEndpoints(app: IApp, upstreams: any) {
-	const head: string[] = ['Domain Name', 'Plugin Prefix Route', 'Config Path']
+	const head: string[] = ['Domain Name (Stateless)', 'Plugin Prefix Route', 'Config Path']
 	const rows: any = [];
 
 	for (const upstream of upstreams) {

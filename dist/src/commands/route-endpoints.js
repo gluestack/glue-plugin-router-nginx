@@ -41,6 +41,7 @@ var path_1 = require("path");
 var spawn_1 = require("../helpers/spawn");
 var helpers_1 = require("@gluestack/helpers");
 var route_endpoints_1 = require("../helpers/route-endpoints");
+var route_devonly_1 = require("./route-devonly");
 var routeEndpoints = function (program, glueStackPlugin) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         program
@@ -69,6 +70,9 @@ function runner(glueStackPlugin) {
                     _a.label = 3;
                 case 3: return [4, (0, route_endpoints_1.routesEndpoints)(glueStackPlugin.app, require(filepath))];
                 case 4:
+                    _a.sent();
+                    return [4, (0, route_devonly_1.runner)(glueStackPlugin)];
+                case 5:
                     _a.sent();
                     return [2];
             }

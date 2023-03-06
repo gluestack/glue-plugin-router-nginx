@@ -1,4 +1,27 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -36,41 +59,15 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 exports.__esModule = true;
-exports.routesList = void 0;
-var add_trailing_slash_1 = require("../helpers/add-trailing-slash");
-var helpers_1 = require("@gluestack/helpers");
-function routesList(app, upstreams) {
-    return __awaiter(this, void 0, void 0, function () {
-        var head, rows, _i, upstreams_1, upstream, domain, port, locations, _a, locations_1, location_1, methods, subPaths, routes, paths, _b, routes_1, route;
-        return __generator(this, function (_c) {
-            head = ['Domain Name (Stateless)', 'Plugin Prefix Route', 'URI Route', 'URI Method'];
-            rows = [];
-            for (_i = 0, upstreams_1 = upstreams; _i < upstreams_1.length; _i++) {
-                upstream = upstreams_1[_i];
-                domain = upstream.domain, port = upstream.port, locations = upstream.locations;
-                for (_a = 0, locations_1 = locations; _a < locations_1.length; _a++) {
-                    location_1 = locations_1[_a];
-                    methods = [];
-                    subPaths = [];
-                    routes = location_1.routes;
-                    paths = (0, add_trailing_slash_1.addTrailingSlash)(location_1.path.replaceAll('(.*)', ''));
-                    for (_b = 0, routes_1 = routes; _b < routes_1.length; _b++) {
-                        route = routes_1[_b];
-                        subPaths.push(route.path);
-                        methods.push(route.method);
-                    }
-                    rows.push([
-                        (0, add_trailing_slash_1.addTrailingSlash)("".concat(domain, ":").concat(port)),
-                        paths,
-                        subPaths.length ? subPaths.join("\n") : "--",
-                        methods.length ? methods.join("\n") : "--"
-                    ]);
-                }
-            }
-            helpers_1.ConsoleTable.print(head, rows);
-            return [2];
-        });
+exports.captureEnvs = void 0;
+var path_1 = require("path");
+var dotenv = __importStar(require("dotenv"));
+var captureEnvs = function (filepath) { return __awaiter(void 0, void 0, void 0, function () {
+    var envPath;
+    return __generator(this, function (_a) {
+        envPath = (0, path_1.join)(filepath, '.env');
+        return [2, dotenv.config({ path: envPath }).parsed];
     });
-}
-exports.routesList = routesList;
-//# sourceMappingURL=route-list.js.map
+}); };
+exports.captureEnvs = captureEnvs;
+//# sourceMappingURL=capture-envs.js.map

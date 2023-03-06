@@ -3,6 +3,7 @@ import { GlueStackPlugin } from "src";
 import { execute } from "../helpers/spawn";
 import { fileExists } from "@gluestack/helpers";
 import { routesEndpoints } from "../helpers/route-endpoints";
+import { runner as routerDevOnly } from "./route-devonly";
 
 export const routeEndpoints = async (program: any, glueStackPlugin: GlueStackPlugin) => {
 	program
@@ -23,6 +24,8 @@ export async function runner(
 	}
 
 	await routesEndpoints(glueStackPlugin.app, require(filepath));
+
+	await routerDevOnly(glueStackPlugin);
 }
 
 const generateRoute = async (): Promise<void> => {
