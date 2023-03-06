@@ -1,6 +1,6 @@
 {
   "name": "@gluestack/glue-plugin-router-nginx",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "Create an Application using GlueStack framework",
   "repository": {
     "type": "git",
@@ -17,7 +17,7 @@
   "dependencies": {
     "@gluestack/glue-plugin-engine": "^0.0.x",
     "@types/node": "^18.14.0",
-    "@gluestack/framework": "^0.0.34"
+    "@gluestack/framework": "^0.0.x"
   },
   "peerDependencies": {
     "@gluestack/glue-plugin-engine": "^0.0.x"
