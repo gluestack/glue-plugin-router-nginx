@@ -13,7 +13,7 @@ export const parameters = {
     storySort: {
       method: 'alphabetical',
       order: [
-        'Router Nginx Plugin Docs',
+        'Router Nginx Plugin',
         ['Getting Started', 'How to Install', 'CLI Reference'],
       ]
     },
