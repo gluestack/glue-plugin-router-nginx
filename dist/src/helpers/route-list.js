@@ -60,7 +60,7 @@ function routesList(app, upstreams) {
                         methods.push(route.method);
                     }
                     rows.push([
-                        (0, add_trailing_slash_1.addTrailingSlash)("".concat(domain, ":").concat(port)),
+                        (0, add_trailing_slash_1.addTrailingSlash)("localhost:".concat(port)),
                         paths,
                         subPaths.length ? subPaths.join("\n") : "--",
                         methods.length ? methods.join("\n") : "--"

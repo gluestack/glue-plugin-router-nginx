@@ -22,7 +22,8 @@ export async function routesList(app: IApp, upstreams: any) {
 			}
 
 			rows.push([
-				addTrailingSlash(`${domain}:${port}`),
+				addTrailingSlash(`localhost:${port}`),
+				// addTrailingSlash(`${domain}:${port}`),
 				paths,
 				subPaths.length ? subPaths.join("\n") : "--",
 				methods.length ? methods.join("\n") : "--"

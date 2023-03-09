@@ -59,7 +59,7 @@ function routesEndpoints(app, upstreams) {
                     configPath.push((0, node_path_1.relative)(process.cwd(), (0, node_path_1.join)(instancePath, 'router.js')));
                 }
                 rows.push([
-                    (0, add_trailing_slash_1.addTrailingSlash)("".concat(domain, ":").concat(port)),
+                    (0, add_trailing_slash_1.addTrailingSlash)("localhost:".concat(port)),
                     prefixRoute.join("\n"),
                     configPath.join("\n")
                 ]);

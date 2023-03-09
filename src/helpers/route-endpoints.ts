@@ -21,7 +21,8 @@ export async function routesEndpoints(app: IApp, upstreams: any) {
 		}
 
 		rows.push([
-			addTrailingSlash(`${domain}:${port}`),
+			addTrailingSlash(`localhost:${port}`),
+			// addTrailingSlash(`${domain}:${port}`),
 			prefixRoute.join("\n"),
 			configPath.join("\n")
 		]);
